@@ -1,0 +1,6 @@
+**/*.exe
+*.exe
+*.idea
+*cmake-build-debug
+Makefile
+build
