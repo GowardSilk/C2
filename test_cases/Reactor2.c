@@ -1,17 +1,20 @@
-#include <WriteIO.h>
 #include <Generator.h>
+#include <WriteIO.h>
+#include <ctype.h>
 
 void reactor_function(wString* str) {
-    for(size_t i = 0; i < strlen(str->buff); i++)
-        str->buff[i] -= 32;
+    for(size_t i = 0; str->buff[i] != '\0'; i++) {
+        if(islower(str->buff[i])) { str->buff[i] -= 32; }
+        else { str->buff[i] += 32; }
+    }
 }
 
-int main() {
+int main(void) {
 
     FILE* fp;
-    fopen_s(&fp, "Reactor1.dat", "wb");
+    fopen_s(&fp, "Reactor2.dat", "wb");
     for(short i = 0; i < 10; i++) {
-        wString in = init_s(GEN_str(LOWER_ARR, 26));
+        wString in = init_s(GEN_str(MIXED_ARR, 52));
         WRITE_IO_wstr(fp, in);
         printf("IN: %s\n", in.buff);
         reactor_function(&in);

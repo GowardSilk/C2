@@ -3,4 +3,7 @@
 *.idea
 *cmake-build-debug
 Makefile
+CMakeFiles
 build
+.vscode
+.vs

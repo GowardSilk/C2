@@ -3,6 +3,7 @@
 
 #define MAX_WSTR_SZ 10
 #define MAX_TRCON_SZ 15
+#define __NORETURN __attribute__((noreturn))
 #define __OVERLOAD __attribute__((overloadable))
 
 #include <stdio.h>
@@ -12,27 +13,42 @@
 
 //wString region
 typedef struct wString_ {
-    const char* buff;
+    char* buff;
 } wString;
 
-static const char* __OVERLOAD at(wString this, unsigned pos) {
-    if(pos >= strlen(this.buff)) {
+static char __OVERLOAD at(wString str, unsigned pos) {
+    if(pos >= strlen(str.buff)) {
         printf("[wString::ERR]: Index out of range!");
         exit(EXIT_FAILURE);
     }
-    return (this.buff+pos);
+    return str.buff[pos];
 }
 
-static size_t __OVERLOAD size(wString this) {
-    return strlen(this.buff);
+static size_t __OVERLOAD size_s(wString* str) {
+    return strlen(str->buff);
 }
 
-struct wString_ __OVERLOAD init(const char* string) {
+static size_t size_s(wString str) {
+    return sizeof(str)/sizeof(char);
+}
+
+struct wString_ init_s(char* string) {
     return (wString) {
-        .buff = string,
+        .buff = string
     };
 }
+
+struct wString_* __OVERLOAD init(int sz) {
+    return malloc(sz);
+}
 //!wString region
+
+//sString region
+typedef struct _sString {
+    wString key;
+    wString value;
+} sString;
+//!sString region
 
 //Triplet region
 typedef struct triplet_ {
@@ -49,37 +65,22 @@ struct triplet_ __OVERLOAD init(int u1, int u2, int u3) {
     };
 }
 
-void __OVERLOAD trprintf(triplet this) {
-    printf("{%d, %d, %d}", this._triplet_unit_1, this._triplet_unit_2, this._triplet_unit_3);
+void __OVERLOAD trprintf(triplet tr) {
+    printf("{%d, %d, %d}", tr._triplet_unit_1, tr._triplet_unit_2, tr._triplet_unit_3);
 }
 
-void __OVERLOAD trprintf(triplet* this) {
-    printf("{%d, %d, %d}", this->_triplet_unit_1, this->_triplet_unit_2, this->_triplet_unit_3);
+void __OVERLOAD trprintf(triplet* tr) {
+    printf("{%d, %d, %d}", tr->_triplet_unit_1, tr->_triplet_unit_2, tr->_triplet_unit_3);
 }
+//CMP "operators"
+//  see the definition after TripletContainer region
+bool __OVERLOAD CMP_is_higher(triplet lhs, triplet rhs);
 
-bool __OVERLOAD CMP_is_higher(triplet lhs, triplet rhs) {
-    return (lhs._triplet_unit_1 + lhs._triplet_unit_2 + lhs._triplet_unit_3)
-            >
-           (rhs._triplet_unit_1 + rhs._triplet_unit_2 + rhs._triplet_unit_3);
-}
+bool __OVERLOAD CMP_is_higher(triplet* lhs, triplet* rhs);
 
-bool __OVERLOAD CMP_is_higher(triplet* lhs, triplet* rhs) {
-    return (lhs->_triplet_unit_1 + lhs->_triplet_unit_2 + lhs->_triplet_unit_3)
-           >
-           (rhs->_triplet_unit_1 + rhs->_triplet_unit_2 + rhs->_triplet_unit_3);
-}
+bool __OVERLOAD CMP_is_equal(triplet lhs, triplet rhs);
 
-bool __OVERLOAD CMP_is_equal(triplet lhs, triplet rhs) {
-    return  lhs._triplet_unit_1 == rhs._triplet_unit_1 &&
-            lhs._triplet_unit_2 == rhs._triplet_unit_2 &&
-            lhs._triplet_unit_3 == rhs._triplet_unit_3;
-}
-
-bool __OVERLOAD CMP_is_equal(triplet* lhs, triplet* rhs) {
-    return  lhs->_triplet_unit_1 == rhs->_triplet_unit_1 &&
-            lhs->_triplet_unit_2 == rhs->_triplet_unit_2 &&
-            lhs->_triplet_unit_3 == rhs->_triplet_unit_3;
-}
+bool __OVERLOAD CMP_is_equal(triplet* lhs, triplet* rhs);
 //!triplet region
 
 //TripletContainer region
@@ -93,7 +94,7 @@ struct TripletContainer_ __OVERLOAD init(size_t icap) {
     return (TripletContainer) {
         .size = 0,
         .capacity = icap,
-        .array = malloc(sizeof(struct triplet_) * icap)
+        .array = (struct triplet_*)malloc(sizeof(struct triplet_) * icap)
     };
 }
 
@@ -136,5 +137,41 @@ size_t size(struct TripletContainer_* tr_con) {
     return tr_con->size;
 }
 //!TripletContainer region
+
+//CMP "operators"
+bool __OVERLOAD CMP_is_higher(triplet lhs, triplet rhs) {
+    return (lhs._triplet_unit_1 + lhs._triplet_unit_2 + lhs._triplet_unit_3)
+            >
+           (rhs._triplet_unit_1 + rhs._triplet_unit_2 + rhs._triplet_unit_3);
+}
+
+bool __OVERLOAD CMP_is_higher(triplet* lhs, triplet* rhs) {
+    return (lhs->_triplet_unit_1 + lhs->_triplet_unit_2 + lhs->_triplet_unit_3)
+           >
+           (rhs->_triplet_unit_1 + rhs->_triplet_unit_2 + rhs->_triplet_unit_3);
+}
+
+bool __OVERLOAD CMP_is_equal(triplet lhs, triplet rhs) {
+    return  lhs._triplet_unit_1 == rhs._triplet_unit_1 &&
+            lhs._triplet_unit_2 == rhs._triplet_unit_2 &&
+            lhs._triplet_unit_3 == rhs._triplet_unit_3;
+}
+
+bool __OVERLOAD CMP_is_equal(triplet* lhs, triplet* rhs) {
+    return  lhs->_triplet_unit_1 == rhs->_triplet_unit_1 &&
+            lhs->_triplet_unit_2 == rhs->_triplet_unit_2 &&
+            lhs->_triplet_unit_3 == rhs->_triplet_unit_3;
+}
+
+bool __OVERLOAD CMP_is_equal(int lhs, int rhs) {
+    return lhs == rhs;
+}
+
+bool __OVERLOAD CMP_is_higher(int lhs, int rhs) {
+    return lhs > rhs;
+}
+
+bool __OVERLOAD 
+//!CMP "operators"
 
 #endif //C2_DEEPMAIN_H

@@ -3,7 +3,7 @@
 
 #include <DeepMain.h>
 
-wString READ_IO_rs(FILE* fp) {
+wString READ_IO_rwString(FILE* fp) {
     size_t len = 0;
     fread(&len, sizeof(size_t), 1, fp);
     char* buff = malloc(sizeof(char)*len);
@@ -13,16 +13,20 @@ wString READ_IO_rs(FILE* fp) {
     };
 }
 
-int READ_IO_ri(FILE* fp) {
+int READ_IO_rint(FILE* fp) {
     int n = 0;
     fread(&n, sizeof(int), 1, fp);
     return n;
 }
 
-triplet READ_IO_rtr(FILE* fp) {
+triplet READ_IO_rtriplet(FILE* fp) {
     triplet tr = init(0, 0, 0);
     fread(&tr, sizeof(triplet), 1, fp);
     return tr;
 }
+
+TripletContainer READ_IO_rTripletContainer(FILE* fp);
+
+sString READ_IO_rsString(FILE* fp);
 
 #endif //C2_READIO_H
