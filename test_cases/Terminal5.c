@@ -27,7 +27,7 @@ int main() {
     fopen_s(&fp, "Terminal5.dat", "wb");
     if(fp != NULL) {
         for(short i = 0; i < 10; i++) {
-            TripletContainer inp = init(6);
+            TripletContainer inp = init((size_t)6);
             printf("TEST %i\n", i);
             for(short j = 0; j < 5; j++) {
                 triplet randtr = GEN_tr();

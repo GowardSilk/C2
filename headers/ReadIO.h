@@ -25,7 +25,15 @@ triplet READ_IO_rtriplet(FILE* fp) {
     return tr;
 }
 
-TripletContainer READ_IO_rTripletContainer(FILE* fp);
+/* BE CAREFUL ! The function does not take length of TripletContainer, so it reads only predefined value! */
+TripletContainer READ_IO_rTripletContainer(FILE* fp) {
+    TripletContainer tr_con = init_s(5);
+    for(short i = 0; i < 5; i++) {
+        triplet tr = READ_IO_rtriplet(fp);
+        push_back(&tr_con, &tr);
+    }
+    return tr_con;
+}
 
 sString READ_IO_rsString(FILE* fp);
 

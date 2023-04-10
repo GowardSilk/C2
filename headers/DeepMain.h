@@ -90,7 +90,7 @@ typedef struct TripletContainer_ {
     size_t capacity;
 } TripletContainer;
 
-struct TripletContainer_ __OVERLOAD init(size_t icap) {
+struct TripletContainer_ __OVERLOAD init_s(size_t icap) {
     return (TripletContainer) {
         .size = 0,
         .capacity = icap,
@@ -158,9 +158,9 @@ bool __OVERLOAD CMP_is_equal(triplet lhs, triplet rhs) {
 }
 
 bool __OVERLOAD CMP_is_equal(triplet* lhs, triplet* rhs) {
-    return  lhs->_triplet_unit_1 == rhs->_triplet_unit_1 &&
-            lhs->_triplet_unit_2 == rhs->_triplet_unit_2 &&
-            lhs->_triplet_unit_3 == rhs->_triplet_unit_3;
+    return  lhs->_triplet_unit_1 + lhs->_triplet_unit_2 + lhs->_triplet_unit_3
+            ==
+            rhs->_triplet_unit_1 + rhs->_triplet_unit_2 + rhs->_triplet_unit_3;
 }
 
 bool __OVERLOAD CMP_is_equal(int lhs, int rhs) {
@@ -171,7 +171,16 @@ bool __OVERLOAD CMP_is_higher(int lhs, int rhs) {
     return lhs > rhs;
 }
 
-bool __OVERLOAD 
+bool __OVERLOAD CMP_is_equal(wString lhs, wString rhs) {
+    return strcmp(lhs.buff, rhs.buff);
+}
+
+bool __OVERLOAD CMP_is_equal(TripletContainer* lhs, TripletContainer* rhs) {
+    if(lhs->size != rhs->size) { return false; }
+    for(size_t i = 0; i < lhs->size; i++)
+        if(!CMP_is_equal(lhs->array[i], rhs->array[i])) { return false; }
+    return true;
+}
 //!CMP "operators"
 
 #endif //C2_DEEPMAIN_H
