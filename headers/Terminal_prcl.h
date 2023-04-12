@@ -2,7 +2,6 @@
 #define C2_TERMINAL_PRCL_H
 
 #include <DeepMain.h>
-#include <ReadIO.h>
 #include <Protocol.h>
 
 enum _TERMINAL {

@@ -7,5 +7,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/algos_out)
 
 add_executable(
         C2_ALGOS
-        Terminal3.c
+        Reactor1.c
 )
