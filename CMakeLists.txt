@@ -13,6 +13,7 @@ set(HEADER_FILES
         ${HEADER_DIR}/ReadIO.h
         ${HEADER_DIR}/WriteIO.h
         ${HEADER_DIR}/Generator.h
+        ${HEADER_DIR}/Image.h
         )
 
 #SUBDIRECTORY PROJECTS
