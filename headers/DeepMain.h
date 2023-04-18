@@ -32,14 +32,14 @@ static size_t size_s(wString str) {
     return sizeof(str)/sizeof(char);
 }
 
-struct wString_ init_s(char* string) {
+struct wString_ wrap(char* string) {
     return (wString) {
         .buff = string
     };
 }
 
-struct wString_* __OVERLOAD init(int sz) {
-    return malloc(sz);
+struct wString_ __OVERLOAD init(int sz) {
+    return (wString) {malloc(sz+1) };
 }
 //!wString region
 

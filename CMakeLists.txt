@@ -13,7 +13,9 @@ set(HEADER_FILES
         ${HEADER_DIR}/ReadIO.h
         ${HEADER_DIR}/WriteIO.h
         ${HEADER_DIR}/Generator.h
+        ${HEADER_DIR}/Protocol.h
         ${HEADER_DIR}/Image.h
+        ${HEADER_DIR}/Imgstream.h
         )
 
 #SUBDIRECTORY PROJECTS
@@ -32,7 +34,7 @@ set_target_properties(HEADER PROPERTIES LINKER_LANGUAGE C)
 add_executable(
         C2 main.c
         ${HEADER_FILES}
-)
+        headers/Imgstream.h)
 
 target_include_directories(C2 PRIVATE ${HEADER_DIR})
 target_include_directories(C2_TEST PRIVATE  ${HEADER_DIR})

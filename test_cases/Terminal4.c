@@ -15,15 +15,15 @@ int main() {
     fopen_s(&fp, "Terminal4.dat", "wb");
     if(fp != NULL) {
         for(short i = 0; i < 10; i++) {
-            TripletContainer inp = init(6);
+            TripletContainer inp = init_s(6);
             for(short j = 0; j < 5; j++) {
                 triplet randtr = GEN_tr();
                 trprintf(randtr);
                 push_back(&inp, &randtr);
-                //WRITE_IO_wtr(fp, randtr);
+                WRITE_IO_wtr(fp, randtr);
             }
             int expec = terminal_function(&inp);
-            //WRITE_IO_wi(fp, expec);
+            WRITE_IO_wi(fp, expec);
             release(&inp);
         }
         fclose(fp);

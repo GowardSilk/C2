@@ -6,10 +6,10 @@ wString reactor_function(wString str) {
     return str;
 }
 
-HIJACK(Reactor_prcl, wString, wString);
+HIJACK(wrd_Reactor_prcl, wString, wString);
 
 int main(void) {
-    Reactor_prcl reactor = init((reactor_type) {
+    wrd_Reactor_prcl reactor = init((reactor_type) {
         .pt = IMPACT_v1_2A
     });
     hijack(&reactor, reactor_function);

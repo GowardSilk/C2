@@ -1,7 +1,7 @@
 #include <Terminal_prcl.h>
 
 triplet terminal_function(triplet tr) {
-    printf("??");
+//    printf("??");
     return (triplet) {
         ._triplet_unit_1 = tr._triplet_unit_3,
         ._triplet_unit_2 = tr._triplet_unit_2,
