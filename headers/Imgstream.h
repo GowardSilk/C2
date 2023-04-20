@@ -35,6 +35,15 @@ struct bmpfile_dib_info
     int32_t vres;
     uint32_t num_colors;
     uint32_t num_important_colors;
+    uint32_t red_mask;
+    uint32_t green_mask;
+    uint32_t blue_mask;
+    uint32_t alpha_mask;
+    uint32_t color_space_type;
+    uint32_t color_space_endpoints[9];
+    uint32_t gamma_red;
+    uint32_t gamma_green;
+    uint32_t gamma_blue;
 };
 
 static void imgstream_render(struct _Image* img, const char* file_dest) {
@@ -53,7 +62,7 @@ static void imgstream_render(struct _Image* img, const char* file_dest) {
                             + sizeof(struct bmpfile_header)
                             + sizeof(struct bmpfile_dib_info),
                 .file_size  = header.bmp_offset
-                            + (img->res.y * 3 + img->res.x % 4)
+                            + (img->res.y * 4 + img->res.x % 4)
                             + img->res.y
         };
         fwrite(&header, sizeof(header), 1, fp);
@@ -64,19 +73,27 @@ static void imgstream_render(struct _Image* img, const char* file_dest) {
                 .height      = img->res.x,
                 .num_planes  = 1,
                 .bits_per_pixel = 32,
-                .compression = 0,
-                .bmp_byte_size = 0,
+                .compression = 0x0003, //BI_BITFIELDS valid for 16/32 bit uncompressed
+                .bmp_byte_size = (32*img->res.x*img->res.y)/8,
                 .hres = 2835,
                 .vres = 2835,
                 .num_colors = 0,
-                .num_important_colors = 0
+                .num_important_colors = 0,
+                .red_mask = 0x00ff0000,
+                .green_mask = 0x0000ff00,
+                .blue_mask = 0x000000ff,
+                .alpha_mask = 0xff000000,
+                .color_space_type = 0x73524742,  // sRGB
+                .gamma_red = 0,
+                .gamma_green = 0,
+                .gamma_blue = 0
         };
         fwrite(&dib_info, sizeof(dib_info), 1, fp);
 
         for(size_t y = 0; y < img->res.y; y++) {
             for(size_t x = 0; x < img->res.x; x++) {
                 pixel pxl = get_pixel((vector2u){x, y}, img);
-                //BGRA
+                //RGBA
                 uint8_t B = gpxl_B(&pxl), G = gpxl_G(&pxl), R = gpxl_R(&pxl), A = gpxl_A(&pxl);
                 fwrite(&B, sizeof(uint8_t), 1, fp);
                 fwrite(&G, sizeof(uint8_t), 1, fp);
@@ -87,8 +104,7 @@ static void imgstream_render(struct _Image* img, const char* file_dest) {
 //                fputc(R, fp);
 //                fputc(A, fp);
             }
-            for(int i = 0; i < img->res.x % 4; i++)
-//                fwrite(0, sizeof(uint32_t), 1, fp);
+            for(int i = 0; i < (4 - (img->res.x * 4) % 4) % 4; i++)
                 fputc(0, fp);
         }
     }
@@ -129,6 +145,13 @@ static void imgstream_read(struct _Image* img, const char* file_dest) {
         printf("vres %d", dib_info.vres);
         printf("num_colors %u", dib_info.num_colors);
         printf("num_important_colors %u", dib_info.num_important_colors);
+        printf("red_mask %u", dib_info.red_mask);
+        printf("green mask %u", dib_info.green_mask);
+        printf("blue mask %u", dib_info.blue_mask);
+        printf("alpha mask %u", dib_info.alpha_mask);
+        printf("gamma red %u", dib_info.gamma_red);
+        printf("gamma green %u", dib_info.gamma_green);
+        printf("gamma blue %u", dib_info.gamma_blue);
         if(dib_info.compression != 0) {
             exit(EXIT_FAILURE);
         }

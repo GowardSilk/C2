@@ -10,6 +10,10 @@ int main(void) {
                     (uint8_t) (j * 255 / img.res.x),
                     (uint8_t) ((i+j) * 255 / (img.res.y/img.res.x)),
                     (uint8_t) (255)
+                    // (uint8_t) (255),
+                    // (uint8_t) (255),
+                    // (uint8_t) (255),
+                    // (uint8_t) (255)
                     );
             if(!set_pixel((vector2u) {i, j}, &pxl, &img))
                 exit(EXIT_FAILURE);
